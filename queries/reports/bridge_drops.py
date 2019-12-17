@@ -10,7 +10,7 @@ c = conn.cursor()
 
 c.execute('''SELECT b_esn, CAST(strftime("%m",stop) as INTEGER), CAST(strftime("%d",stop) as INTEGER), SUM(CAST(strftime("%s",stop) as INTEGER) - CAST(strftime("%s",start) as INTEGER))
             FROM video_gaps
-            WHERE b_esn = "10035cb5"
+            WHERE b_esn = "100317d3"
             GROUP BY CAST(strftime("%d",stop) as INTEGER)
             ORDER BY CAST(strftime("%d",stop) as INTEGER) DESC;''')
 

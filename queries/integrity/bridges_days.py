@@ -9,8 +9,8 @@ c = conn.cursor()
 
 
 c.execute('''SELECT b_esn, CAST(strftime("%m",stop) as INTEGER), CAST(strftime("%d",stop) as INTEGER)
-            FROM video_gaps
-            WHERE b_esn = "10035cb5"
+            FROM incidents
+            -- WHERE b_esn = "10035cb5"
             GROUP BY CAST(strftime("%d",stop) as INTEGER)
             ORDER BY CAST(strftime("%d",stop) as INTEGER) DESC;''')
 

@@ -18,10 +18,12 @@ c = conn.cursor()
 # Create table
 
 
-c.execute('''SELECT b_esn, c_esn, total_bridge_cams, incident_cams, incident_dif, drop_type, start, stop, duration_sum
+c.execute('''SELECT incidents.b_esn, incidents.c_esn, total_bridge_cams, incident_cams, incident_dif, drop_type, start, stop, duration_sum, incident_guid
             FROM incidents
-            WHERE CAST(strftime("%m",stop) as INTEGER) = 11 AND CAST(strftime("%d",stop) as INTEGER) in (1,2) and drop_type = "camera"
-            GROUP BY c_esn
+            INNER JOIN cams
+            ON incidents.c_esn = cams.c_esn
+            WHERE CAST(strftime("%m",stop) as INTEGER) = 11 AND CAST(strftime("%d",stop) as INTEGER) in (25,26,27,28,29,30) and drop_type = "camera" AND cams.p_esn = ""
+            GROUP BY incident_guid
             ORDER BY duration_sum DESC;''')
 
 # Insert a row of data
@@ -45,15 +47,16 @@ with open("reports/top_camera_loss_index_{}.csv".format(now_string), "wb") as f:
 for idx, row in enumerate(all_rows):
     if idx < 11:
         cam_esn = row[1]
-        with open("reports/top_camera_loss_{}_{}.csv".format(cam_esn, now_string), "wb") as f:
+        i_guid = row[-1]
+        with open("reports/top_camera_loss_{}_{}.csv".format(cam_esn, now_string), "ab") as f:
             writer = csv.writer(f, f, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
             header = ["bridge_esn", "c_esn", "start", "stop", "dif"]
             writer.writerow(header)
             c.execute(''' SELECT b_esn, c_esn, start, stop, CAST(strftime("%s", stop) as INTEGER) - CAST(strftime("%s", start) as INTEGER)
-                          FROM video_gaps
-                          WHERE c_esn = ? AND CAST(strftime("%d",stop) as INTEGER) in (1,2) AND CAST(strftime("%m",stop) as INTEGER) = 11
+                          FROM incidents
+                          WHERE incident_guid = ?
                           GROUP BY start
-                          ORDER BY start DESC;''', (cam_esn,))
+                          ORDER BY start DESC;''', (i_guid,))
             all_rows = c.fetchall()
             for row in all_rows:
                 writer.writerow(row)

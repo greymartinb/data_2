@@ -2,9 +2,6 @@ import sqlite3
 conn = sqlite3.connect('dhl_data.db')
 from pprint import pprint
 import os
-import glob
-import csv
-import xlwt
 from datetime import datetime, timedelta
 
 now = datetime.now()
@@ -19,7 +16,7 @@ c = conn.cursor()
 
 
 c.execute('''SELECT CAST(strftime("%d",stop) as INTEGER), CAST(strftime("%m",stop) as INTEGER)
-             FROM Incidents
+             FROM video_gaps
              GROUP BY CAST(strftime("%m",stop) as INTEGER), CAST(strftime("%d",stop) as INTEGER)
              ORDER BY CAST(strftime("%m",stop) as INTEGER), CAST(strftime("%d",stop) as INTEGER)''')
 
