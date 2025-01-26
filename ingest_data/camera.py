@@ -12,16 +12,16 @@ if __name__ == "__main__":
 
     # Save (commit) the changes
     csv_rows = []
-    with open("data/cameras.csv", "rb") as f:
+    with open("DHL Global Forwarding_cameras_10_01_23_.csv", "r") as f:
         reader = csv.reader(f, delimiter=',', quotechar='|')
         for row in reader:
             csv_rows.append(row)
 
     for idx, row in enumerate(csv_rows):
-        if idx != 0:
-            print(row)
-            c.execute("INSERT INTO cams(c_esn, name, b_esn, p_esn, model, onvif, rtsp, uuid, make, at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]))
-            conn.commit()
+        # if idx != 0:
+        print(row)
+        c.execute("INSERT INTO cams(c_esn, name, b_esn, p_esn, model, onvif, rtsp, uuid, make, at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (row[0].replace('"', ''), row[1].replace('"', ''), row[2].replace('"', ''), row[3].replace('"', ''), row[4].replace('"', ''), row[5].replace('"', ''), row[6].replace('"', ''), row[7].replace('"', ''), row[8].replace('"', ''), row[9].replace('"', '')))
+        conn.commit()
 
     # We can also close the connection if we are done with it.
     # Just be sure any changes have been committed or they will be lost.

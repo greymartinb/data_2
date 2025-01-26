@@ -10,6 +10,13 @@ c = conn.cursor()
 
 # Create table
 
+title = "DHL_loss_12_24.csv"
+
+with open("reports/{}".format(title), "a") as f:
+        keys = ["esn", "name", "total_secs", "after_loss", "dif", "total_percent", "bridge_loss", "bridge_loss_count", "bridge_percent",
+                "camera_loss", "camera_loss_count", "camera_percent", "switch_loss", "switch_loss_count", "switch_percent", "month", "day"]
+        writer = csv.DictWriter(f, fieldnames=keys, quotechar='"', quoting=csv.QUOTE_ALL, extrasaction="ignore")
+        writer.writeheader()
 
 drop_type = {"camera": {"incident_count": 0,
                         "duration_sum": 0},
@@ -20,11 +27,9 @@ drop_type = {"camera": {"incident_count": 0,
 
 bridges = dict()
 
-days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30]
+days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
 
-# days_2 = [1, 2, 3, 4, 5, 6, 7]
-
-month = 11
+month = 12
 
 for day in days:
 
@@ -66,14 +71,14 @@ for day in days:
                 ON incidents.c_esn = cams.c_esn
                 INNER JOIN bridges
                 ON incidents.b_esn = bridges.b_esn
-                WHERE CAST(strftime("%d",stop) as INTEGER) in (?) AND cams.name NOT LIKE "Off %" AND CAST(strftime("%m",stop) as INTEGER) = (?) AND duration_sum/incident_cams  > 30
+                WHERE CAST(strftime("%d",incident_stop) as INTEGER) in (?) AND cams.name NOT LIKE "Off %" AND CAST(strftime("%m",incident_stop) as INTEGER) = (?) AND duration_sum/incident_cams  > 10 AND CAST(strftime("%Y",incident_stop) as INTEGER) = 2024
                 GROUP BY  incident_guid, drop_type
                 ORDER BY incident_guid;''', (day, month))
 
-    with open("reports/dhl_incidents/bridge_loss_11-01_11-31_v2.csv", "ab") as f:
-            keys = ["esn", "name", "total_secs", "after_loss", "dif", "total_percent", "bridge_loss", "bridge_loss_count", "bridge_percent", "camera_loss", "camera_loss_count","camera_percent", "switch_loss", "switch_loss_count", "switch_percent", "month", "day"]
+    with open("reports/{}".format(title), "a") as f:
+            keys = ["esn", "name", "total_secs", "after_loss", "dif", "total_percent", "bridge_loss", "bridge_loss_count", "bridge_percent", "camera_loss", "camera_loss_count", "camera_percent", "switch_loss", "switch_loss_count", "switch_percent", "month", "day"]
             writer = csv.DictWriter(f, fieldnames=keys, quotechar='"', quoting=csv.QUOTE_ALL, extrasaction="ignore")
-            writer.writeheader()
+            # writer.writeheader()
             all_rows = c.fetchall()
             print(len(all_rows))
             for row in all_rows:

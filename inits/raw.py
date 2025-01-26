@@ -10,23 +10,12 @@ c = conn.cursor()
 #              (een text, b_esn text primary key, firmware text)''')
 
 
-c.execute('''CREATE TABLE incidents
-             ( incident_id integer primary key AUTOINCREMENT,
+c.execute('''CREATE TABLE raw
+             ( raw_id INTEGER primary key AUTOINCREMENT,
                b_esn text,
                c_esn text,
-               start datetime,
-               stop datetime,
-               incident_cams integer,
-               duration_sum integer,
-               incident_start datetime,
-               incident_stop datetime,
-               incident_dif integer,
-               total_bridge_cams integer,
-               unique_cams integer,
-               drop_type text NOT NULL,
-               incident_guid text,
-               video_gaps_id integer,
-               Foreign Key (video_gaps_id) REFERENCES video_gaps(video_gaps_id),
+               ts datetime,
+               implied BOOLEAN DEFAULT FALSE,
                Foreign Key (b_esn) REFERENCES bridges(b_esn),
                Foreign Key (c_esn) REFERENCES cams(c_esn))''')
 
